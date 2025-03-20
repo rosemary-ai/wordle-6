@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { useAuth } from 'contexts/AuthContext'
 import AuthModal from 'components/AuthModal'
 import Header from 'components/Header'
-import { SquareProps } from '@types'
+import { GridProps, SquareProps } from '@types'
 
 const App = () => {
   return (
@@ -15,30 +15,43 @@ const App = () => {
   )
 }
 
-const Square = ({ letter }: SquareProps) => {
+const Square = ({ letter, entered, index }: SquareProps) => {
   return (
+    // styling depending on entered and index
     <div className="square">
       {letter}
     </div>
   )
 }
 
-const Game = () => {
-  // game state handling
+const Grid = ({ words, input }: GridProps) => {
+  const numRows = words.length;
+  // array of 36 letters, entered words -> input -> empty squares
+  const letters = (words.join("") + input).padEnd(36, " ").split("");
+
+  const grid = letters.map((letter, i) => {
+    const entered = (i / 6) < numRows;
+    return <Square key={i} letter={letter} entered={entered} index={i % 6} />
+  });
+
   return (
     <Fragment>
-      <Grid />
-      {/* possibly more game info */}
+      <div className="grid">
+        {grid}
+      </div>
     </Fragment>
   )
 }
 
-const Grid = () => {
+const Game = () => {
+  const [input, setInput] = useState<string>("TESTTT");
+  const [words, setWords] = useState<string[]>(["WORDLE", "LETTER"]);
+  // can do setInput(word => word + letter)
   return (
-    <div className="grid">
-      {/* TODO: make this a loop like tic tac toe */}
-      <Square letter='a' />
-    </div>
+    <Fragment>
+      <Grid words={words} input={input}/>
+      {/* display possibly more game info */}
+    </Fragment>
   )
 }
 
