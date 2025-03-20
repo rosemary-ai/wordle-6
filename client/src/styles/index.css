@@ -56,6 +56,22 @@ code {
   font-size: 60px;
 }
 
+.square_blank {
+  background-color: white;
+}
+
+.square_grey {
+  background-color: grey;
+}
+
+.square_yellow {
+  background-color: yellow;
+}
+
+.square_green {
+  background-color: #44b700;
+}
+
 /*
   Extra Small Devices, Phones
   @media only screen and (min-width: 480px) {}

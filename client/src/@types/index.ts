@@ -11,11 +11,11 @@ export interface FormData {
 
 export interface SquareProps {
   letter: string,
-  entered: boolean,
-  index: number,
+  colour: string,
 }
 
 export interface GridProps {
   words: string[]
   input: string,
+  correctWord: string,
 }

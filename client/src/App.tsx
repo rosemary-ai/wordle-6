@@ -15,23 +15,33 @@ const App = () => {
   )
 }
 
-const Square = ({ letter, entered, index }: SquareProps) => {
+const Square = ({ letter, colour }: SquareProps) => {
   return (
-    // styling depending on entered and index
-    <div className="square">
+    // styling depending on colour
+    <div className={`square square_${colour}`}>
       {letter}
     </div>
   )
 }
 
-const Grid = ({ words, input }: GridProps) => {
+const Grid = ({ words, input, correctWord }: GridProps) => {
   const numRows = words.length;
   // array of 36 letters, entered words -> input -> empty squares
   const letters = (words.join("") + input).padEnd(36, " ").split("");
 
   const grid = letters.map((letter, i) => {
-    const entered = (i / 6) < numRows;
-    return <Square key={i} letter={letter} entered={entered} index={i % 6} />
+    if ((i / 6) < numRows) {
+      // TODO: function to calculate colours
+      // accounting for duplicate letters being entered / in correct answer
+      let colour = "grey";
+      if (letter === correctWord[i % 6]) {
+        colour = "green";
+      } else if (correctWord.includes(letter)) {
+        colour = "yellow";
+      }
+      return <Square key={i} letter={letter} colour={colour}/>
+    }
+    return <Square key={i} letter={letter} colour={"blank"}/>
   });
 
   return (
@@ -44,12 +54,13 @@ const Grid = ({ words, input }: GridProps) => {
 }
 
 const Game = () => {
+  const correctWord = "WORDLE";
   const [input, setInput] = useState<string>("TESTTT");
-  const [words, setWords] = useState<string[]>(["WORDLE", "LETTER"]);
+  const [words, setWords] = useState<string[]>(["LETTER", "WEEDLE", "WORDLE"]);
   // can do setInput(word => word + letter)
   return (
     <Fragment>
-      <Grid words={words} input={input}/>
+      <Grid words={words} input={input} correctWord={correctWord}/>
       {/* display possibly more game info */}
     </Fragment>
   )
