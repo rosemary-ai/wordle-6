@@ -60,22 +60,22 @@ const Game = () => {
     input: "",
   });
 
-  /**
-   * TODO:
-   * make backspace work
-   */
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       setLetters((prevLetters) => {
-        if (prevLetters.words.length >= 6 || 
-            prevLetters.words[prevLetters.words.length - 1] === correctWord
-        ) return prevLetters;
+        if (prevLetters.words.length >= 6 || gameWon(prevLetters.words, correctWord)) {
+          return prevLetters;
+        }
 
         if (/^[a-zA-Z]$/.test(e.key) && prevLetters.input.length < 6) {
           return {
             words: prevLetters.words, 
             input: prevLetters.input + e.key.toUpperCase()
+          };
+        } else if (e.key === "Backspace" || e.key === "Delete") {
+          return {
+            words: prevLetters.words,
+            input: prevLetters.input.slice(0, -1)
           };
         } else if (e.key === "Enter" && prevLetters.input.length === 6) {
           return {
@@ -99,6 +99,10 @@ const Game = () => {
       {/* display possibly more game info */}
     </Fragment>
   )
+}
+
+const gameWon = (words: string[], correctWord: string) => {
+  return (words[words.length - 1] === correctWord);
 }
 
 const LoggedInStatus = () => {
