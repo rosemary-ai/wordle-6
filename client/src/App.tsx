@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useAuth } from 'contexts/AuthContext'
 import AuthModal from 'components/AuthModal'
 import Header from 'components/Header'
-import { GridProps, SquareProps } from '@types'
+import { GridProps, Letters, SquareProps } from '@types'
 
 const App = () => {
   return (
@@ -55,12 +55,47 @@ const Grid = ({ words, input, correctWord }: GridProps) => {
 
 const Game = () => {
   const correctWord = "WORDLE";
-  const [input, setInput] = useState<string>("TESTTT");
-  const [words, setWords] = useState<string[]>(["LETTER", "WEEDLE", "WORDLE"]);
-  // can do setInput(word => word + letter)
+  const [letters, setLetters] = useState<Letters>({ 
+    words: [],
+    input: "",
+  });
+
+  /**
+   * TODO:
+   * make backspace work
+   */
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      setLetters((prevLetters) => {
+        if (prevLetters.words.length >= 6 || 
+            prevLetters.words[prevLetters.words.length - 1] === correctWord
+        ) return prevLetters;
+
+        if (/^[a-zA-Z]$/.test(e.key) && prevLetters.input.length < 6) {
+          return {
+            words: prevLetters.words, 
+            input: prevLetters.input + e.key.toUpperCase()
+          };
+        } else if (e.key === "Enter" && prevLetters.input.length === 6) {
+          return {
+            words: [...prevLetters.words, prevLetters.input],
+            input: ""
+          };
+        }
+        return prevLetters;
+      });
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, []);
+
   return (
     <Fragment>
-      <Grid words={words} input={input} correctWord={correctWord}/>
+      <Grid words={letters.words} input={letters.input} correctWord={correctWord}/>
       {/* display possibly more game info */}
     </Fragment>
   )

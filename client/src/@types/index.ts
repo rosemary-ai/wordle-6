@@ -19,3 +19,8 @@ export interface GridProps {
   input: string,
   correctWord: string,
 }
+
+export interface Letters {
+  words: string[],
+  input: string,
+}
