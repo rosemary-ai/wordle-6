@@ -31,15 +31,8 @@ const Grid = ({ words, input, correctWord }: GridProps) => {
 
   const grid = letters.map((letter, i) => {
     if ((i / 6) < numRows) {
-      // TODO: function to calculate colours
-      // accounting for duplicate letters being entered / in correct answer
-      let colour = "grey";
-      if (letter === correctWord[i % 6]) {
-        colour = "green";
-      } else if (correctWord.includes(letter)) {
-        colour = "yellow";
-      }
-      return <Square key={i} letter={letter} colour={colour}/>
+      return <Square key={i} letter={letter} 
+              colour={letterColour(words[Math.floor(i / 6)], i % 6, correctWord)}/>
     }
     return <Square key={i} letter={letter} colour={"blank"}/>
   });
@@ -51,6 +44,25 @@ const Grid = ({ words, input, correctWord }: GridProps) => {
       </div>
     </Fragment>
   )
+}
+
+// hopefully this works
+const letterColour = (word: string, index: number, correctWord: string): string => {
+  if (word[index] === correctWord[index]) return "green";
+  const letter = word[index];
+  let correctIndex = correctWord.indexOf(letter);
+  let matchingIndex = word.indexOf(letter);
+  while (correctIndex >= 0) {
+    if (matchingIndex < index) {
+      if (!(correctWord[matchingIndex] === letter)) correctIndex = correctWord.indexOf(letter, correctIndex + 1);
+      matchingIndex = word.indexOf(letter, matchingIndex + 1);
+    } else if (word[correctIndex] === letter) {
+      correctIndex = correctWord.indexOf(letter, correctIndex + 1);
+    } else {
+      return "yellow";
+    }
+  }
+  return "grey";
 }
 
 const Game = () => {
@@ -67,6 +79,7 @@ const Game = () => {
           return prevLetters;
         }
 
+        // TOOD: add check for real word being entered
         if (/^[a-zA-Z]$/.test(e.key) && prevLetters.input.length < 6) {
           return {
             words: prevLetters.words, 
@@ -96,7 +109,8 @@ const Game = () => {
   return (
     <Fragment>
       <Grid words={letters.words} input={letters.input} correctWord={correctWord}/>
-      {/* display possibly more game info */}
+      <p>{gameWon(letters.words, correctWord) && "yay you won"}</p>
+      <p>{!gameWon(letters.words, correctWord) && letters.words.length >= 6 && `you lost lol the word was ${correctWord}`}</p>
     </Fragment>
   )
 }
