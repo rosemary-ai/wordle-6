@@ -3,6 +3,7 @@ import { useAuth } from 'contexts/AuthContext'
 import AuthModal from 'components/AuthModal'
 import Header from 'components/Header'
 import { GridProps, Letters, SquareProps } from '@types'
+import { Button } from '@mui/material'
 
 const App = () => {
   return (
@@ -90,11 +91,16 @@ const Game = () => {
             words: prevLetters.words,
             input: prevLetters.input.slice(0, -1)
           };
-        } else if (e.key === "Enter" && prevLetters.input.length === 6) {
-          return {
-            words: [...prevLetters.words, prevLetters.input],
-            input: ""
-          };
+        }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (prevLetters.input.length === 6) {
+            e.preventDefault();
+            return {
+              words: [...prevLetters.words, prevLetters.input],
+              input: ""
+            };
+          }
         }
         return prevLetters;
       });
@@ -106,11 +112,16 @@ const Game = () => {
     }
   }, []);
 
+  const onNewGameClick = () => {
+    setLetters({words: [], input: ""});
+  }
+
   return (
     <Fragment>
       <Grid words={letters.words} input={letters.input} correctWord={correctWord}/>
       <p>{gameWon(letters.words, correctWord) && "yay you won"}</p>
       <p>{!gameWon(letters.words, correctWord) && letters.words.length >= 6 && `you lost lol the word was ${correctWord}`}</p>
+      <Button onClick={() => onNewGameClick()}>New Game</Button>
     </Fragment>
   )
 }
